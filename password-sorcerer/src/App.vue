@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-const passwordLength = ref(0);
+const minPasswordLength = 4;
+const maxPasswordLength = 128;
+const passwordLength = ref(minPasswordLength);
+
+const setPasswordLengthFromRange = (event:Event) => {
+  const eventTarget = event.target as HTMLInputElement
+  passwordLength.value = eventTarget.valueAsNumber
+}
 </script>
 
 <template>
@@ -14,8 +21,9 @@ const passwordLength = ref(0);
       <div class="col">
         <label for="passwordLengthRange" class="form-label">Password Length</label>
       </div>
-      <div class="col">
-        <input type="range" class="form-range" min="0" max="5" id="passwordLengthRange" v-model="passwordLength">
+      <div class="col d-flex gap-4">
+        <!-- Need to have the range update as slider is sliding -->
+        <input type="range" class="form-range" :min="minPasswordLength" :max="maxPasswordLength" id="passwordLengthRange" :valueAsNumber="passwordLength" @change="setPasswordLengthFromRange">
         <div>{{passwordLength}}</div>
       </div>
     </div>
