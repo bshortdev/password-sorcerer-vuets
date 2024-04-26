@@ -21,9 +21,72 @@ const setPasswordLengthFromRange = (event: Event) => {
   passwordLength.value = eventTarget.valueAsNumber
 }
 
-const generatePassword = () =>{
-  // Add randomization
-  generatedPassword.value = 'GeneratedAPassword'
+const getRandomValue = (value: number) => {
+  return Math.floor(Math.random() * value);
+}
+
+const getRandomLowercaseLetter = () => {
+  const lowercaseAsciiStart = 97;
+  const letterIndex = getRandomValue(26);
+  return String.fromCharCode(lowercaseAsciiStart + letterIndex);
+}
+
+const getRandomUppercaseLetter = () => {
+  const uppercaseAsciiStart = 65;
+  const letterIndex = getRandomValue(26);
+  return String.fromCharCode(uppercaseAsciiStart + letterIndex);
+}
+
+const getRandomNumber = () => {
+  const numbersAsciiStart = 48;
+  const letterIndex = getRandomValue(10);
+  return String.fromCharCode(numbersAsciiStart + letterIndex);
+}
+const getRandomSpecialCharacter = () => {
+  const specialCharacterAsciiStart = 34;
+  const letterIndex = getRandomValue(13);
+  return String.fromCharCode(specialCharacterAsciiStart + letterIndex);
+}
+const shuffle = (array: string[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+const generatePassword = () => {
+  let generatedPasswordHolder = ''
+  const randomMethodsToUse = [];
+  // If Lowercase letters
+  if (hasLowercaseLetters.value) {
+    generatedPasswordHolder += getRandomLowercaseLetter();
+    randomMethodsToUse.push(getRandomLowercaseLetter)
+  }
+
+  // If Uppercase letters
+  if (hasUppercaseLetters.value) {
+    generatedPasswordHolder += getRandomUppercaseLetter();
+    randomMethodsToUse.push(getRandomUppercaseLetter)
+  }
+
+  // If Numbers 
+  if (hasNumbers.value) {
+    generatedPasswordHolder += getRandomNumber();
+    randomMethodsToUse.push(getRandomNumber)
+  }
+
+  // If Special characters
+  if (hasSpecialCharacters.value) {
+    generatedPasswordHolder += getRandomSpecialCharacter();
+    randomMethodsToUse.push(getRandomSpecialCharacter)
+  }
+
+  while (generatedPasswordHolder.length < passwordLength.value) {
+    generatedPasswordHolder += randomMethodsToUse[getRandomValue(randomMethodsToUse.length - 1)]()
+  }
+
+  generatedPassword.value = shuffle(generatedPasswordHolder.split("")).join('')
 };
 </script>
 
@@ -39,7 +102,8 @@ const generatePassword = () =>{
         <div class="row justify-content-center pb-3">
           <div class="col-8">
             <!-- Add an icon for copying -->
-            <input type="text" class="form-control" placeholder="Generated Password" disabled v-model="generatedPassword"/>
+            <input type="text" class="form-control" placeholder="Generated Password" disabled
+              v-model="generatedPassword" />
           </div>
         </div>
         <div class="row justify-content-center">
@@ -62,7 +126,7 @@ const generatePassword = () =>{
                         <!-- Need to have the range update as slider is sliding -->
                         <input type="range" class="form-range" :min="minPasswordLength" :max="maxPasswordLength"
                           id="passwordLengthRange" :valueAsNumber="passwordLength" @change="setPasswordLengthFromRange"
-                          @input="setPasswordLengthFromRange" />                        
+                          @input="setPasswordLengthFromRange" />
                       </div>
                       <div class="col">
                         <div>{{ passwordLength }}</div>
@@ -112,7 +176,8 @@ const generatePassword = () =>{
 
         <div class="row justify-content-center pt-3">
           <div class="col-8">
-            <button type="button" class="btn btn-primary w-100" :disabled="!isReadyToGeneratePassword" @click="generatePassword">Generate
+            <button type="button" class="btn btn-primary w-100" :disabled="!isReadyToGeneratePassword"
+              @click="generatePassword">Generate
               Password</button>
           </div>
         </div>
