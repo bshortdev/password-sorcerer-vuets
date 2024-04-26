@@ -8,6 +8,8 @@ const hasUppercaseLetters = ref(false);
 const hasNumbers = ref(false);
 const hasSpecialCharacters = ref(false);
 const generatedPassword = ref('');
+const isPasswordGenerated = ref(false);
+const isPasswordCopied = ref(false);
 
 const isReadyToGeneratePassword = computed(() => {
   return hasLowercaseLetters.value ||
@@ -56,6 +58,7 @@ const shuffle = (array: string[]) => {
 };
 
 const generatePassword = () => {
+
   let generatedPasswordHolder = ''
   const randomMethodsToUse = [];
   // If Lowercase letters
@@ -87,7 +90,17 @@ const generatePassword = () => {
   }
 
   generatedPassword.value = shuffle(generatedPasswordHolder.split("")).join('')
+  isPasswordGenerated.value = true;
+  isPasswordCopied.value = false;
 };
+
+
+const copyTextToClipboard = () => {
+  navigator.clipboard.writeText(generatedPassword.value);
+  isPasswordCopied.value = true;
+}
+
+
 </script>
 
 <template>
@@ -102,8 +115,14 @@ const generatePassword = () => {
         <div class="row justify-content-center pb-3">
           <div class="col-8">
             <!-- Add an icon for copying -->
-            <input type="text" class="form-control" placeholder="Generated Password" disabled
-              v-model="generatedPassword" />
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Generated Password" disabled
+                v-model="generatedPassword" />
+              <button class="btn" :class="isPasswordCopied ? 'btn-outline-success' : 'btn-outline-primary'"
+                @click="copyTextToClipboard" :disabled="!isPasswordGenerated">
+                <i :class="isPasswordCopied ? 'bi-clipboard-check' : 'bi-copy'"></i>
+              </button>
+            </div>
           </div>
         </div>
         <div class="row justify-content-center">
