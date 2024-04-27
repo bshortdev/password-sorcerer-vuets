@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 const minPasswordLength = 4;
 const maxPasswordLength = 128;
 const passwordLength = ref(minPasswordLength);
 const hasLowercaseLetters = ref(true);
-const hasUppercaseLetters = ref(false);
-const hasNumbers = ref(false);
-const hasSpecialCharacters = ref(false);
+const hasUppercaseLetters = ref(true);
+const hasNumbers = ref(true);
+const hasSpecialCharacters = ref(true);
 const generatedPassword = ref('');
 const isPasswordGenerated = ref(false);
 const isPasswordCopied = ref(false);
@@ -44,11 +44,13 @@ const getRandomNumber = () => {
   const letterIndex = getRandomValue(10);
   return String.fromCharCode(numbersAsciiStart + letterIndex);
 }
+
 const getRandomSpecialCharacter = () => {
   const specialCharacterAsciiStart = 34;
   const letterIndex = getRandomValue(13);
   return String.fromCharCode(specialCharacterAsciiStart + letterIndex);
 }
+
 const shuffle = (array: string[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -58,28 +60,24 @@ const shuffle = (array: string[]) => {
 };
 
 const generatePassword = () => {
-
   let generatedPasswordHolder = ''
   const randomMethodsToUse = [];
-  // If Lowercase letters
+
   if (hasLowercaseLetters.value) {
     generatedPasswordHolder += getRandomLowercaseLetter();
     randomMethodsToUse.push(getRandomLowercaseLetter)
   }
 
-  // If Uppercase letters
   if (hasUppercaseLetters.value) {
     generatedPasswordHolder += getRandomUppercaseLetter();
     randomMethodsToUse.push(getRandomUppercaseLetter)
   }
 
-  // If Numbers 
   if (hasNumbers.value) {
     generatedPasswordHolder += getRandomNumber();
     randomMethodsToUse.push(getRandomNumber)
   }
 
-  // If Special characters
   if (hasSpecialCharacters.value) {
     generatedPasswordHolder += getRandomSpecialCharacter();
     randomMethodsToUse.push(getRandomSpecialCharacter)
@@ -94,96 +92,102 @@ const generatePassword = () => {
   isPasswordCopied.value = false;
 };
 
-
 const copyTextToClipboard = () => {
   navigator.clipboard.writeText(generatedPassword.value);
   isPasswordCopied.value = true;
 }
 
-
+onMounted(() => {
+  generatePassword();
+})
 </script>
 
 <template>
-  <div class="container d-flex flex-column">
-    <div class="row justify-content-center align-items-center vh-100">
-      <div class="col-4">
-        <div class="row justify-content-center py-3">
-          <div class="col text-center">
-            <h1>Password Sorcerer</h1>
+  <div class="container d-flex flex-column justify-content-center align-items-center ">
+    <div class="col-8 vh-100 mx-auto align-content-center">
+      <div class="row justify-content-center py-3">
+        <div class="col text-center">
+          <h1>Password Sorcerer</h1>
+        </div>
+      </div>
+      <div class="row justify-content-center pb-1">
+        <div class="col-4">
+          <div class="input-group">
+            <!-- Replace this with an expandable text field -->
+            <input type="text" class="form-control" placeholder="Generated Password" disabled
+              v-model="generatedPassword" />
+            <button class="btn" :class="isPasswordCopied ? 'btn-outline-success' : 'btn-outline-primary'"
+              @click="copyTextToClipboard" :disabled="!isPasswordGenerated">
+              <i :class="isPasswordCopied ? 'bi-clipboard-check' : 'bi-copy'"></i>
+            </button>
           </div>
         </div>
-        <div class="row justify-content-center pb-3">
-          <div class="col-8">
-            <!-- Add an icon for copying -->
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Generated Password" disabled
-                v-model="generatedPassword" />
-              <button class="btn" :class="isPasswordCopied ? 'btn-outline-success' : 'btn-outline-primary'"
-                @click="copyTextToClipboard" :disabled="!isPasswordGenerated">
-                <i :class="isPasswordCopied ? 'bi-clipboard-check' : 'bi-copy'"></i>
-              </button>
-            </div>
-          </div>
+      </div>
+      <!-- Change this into an icon next to copy? -->
+      <div class="row justify-content-center pt-1 pb-3">
+        <div class="col-4">
+          <button type="button" class="btn btn-primary w-100" :disabled="!isReadyToGeneratePassword"
+            @click="generatePassword">Generate
+            Password</button>
         </div>
-        <div class="row justify-content-center">
-          <div class="col-8">
-            <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                    Settings
-                  </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                  <div class="accordion-body">
-                    <div class="row">
-                      <div class="col-12">
-                        <label for="passwordLengthRange" class="form-label">Password Length</label>
-                      </div>
-                      <div class="col-auto">
-                        <!-- Need to have the range update as slider is sliding -->
-                        <input type="range" class="form-range" :min="minPasswordLength" :max="maxPasswordLength"
-                          id="passwordLengthRange" :valueAsNumber="passwordLength" @change="setPasswordLengthFromRange"
-                          @input="setPasswordLengthFromRange" />
-                      </div>
-                      <div class="col">
-                        <div>{{ passwordLength }}</div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-4">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  Settings
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <div class="row">
+                    <div class="col-12">
+                      <label for="passwordLengthRange" class="form-label">Password Length</label>
+                    </div>
+                    <div class="col-auto">
+                      <input type="range" class="form-range" :min="minPasswordLength" :max="maxPasswordLength"
+                        id="passwordLengthRange" :valueAsNumber="passwordLength" @change="setPasswordLengthFromRange"
+                        @input="setPasswordLengthFromRange" />
+                    </div>
+                    <div class="col">
+                      <div>{{ passwordLength }}</div>
+                    </div>
+                  </div>
+                  <div class="row justify-content-center pt-2">
+                    <div class="col">
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="lowercaseCheckbox"
+                          v-model="hasLowercaseLetters" />
+                        <label for="lowercaseCheckbox" class="form-check-label">Lowercase Letters?</label>
                       </div>
                     </div>
-                    <div class="row justify-content-center pt-2">
-                      <div class="col">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="lowercaseCheckbox"
-                            v-model="hasLowercaseLetters" />
-                          <label for="lowercaseCheckbox" class="form-check-label">Lowercase Letters?</label>
-                        </div>
+                  </div>
+                  <div class="row justify-content-center">
+                    <div class="col">
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="uppercaseCheckbox"
+                          v-model="hasUppercaseLetters" />
+                        <label for="uppercaseCheckbox" class="form-check-label">Uppercase Letters?</label>
                       </div>
                     </div>
-                    <div class="row justify-content-center">
-                      <div class="col">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="uppercaseCheckbox"
-                            v-model="hasUppercaseLetters" />
-                          <label for="uppercaseCheckbox" class="form-check-label">Uppercase Letters?</label>
-                        </div>
+                  </div>
+                  <div class="row justify-content-center">
+                    <div class="col">
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="numbersCheckbox" v-model="hasNumbers" />
+                        <label for="numbersCheckbox" class="form-check-label">Numbers?</label>
                       </div>
                     </div>
-                    <div class="row justify-content-center">
-                      <div class="col">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="numbersCheckbox" v-model="hasNumbers" />
-                          <label for="numbersCheckbox" class="form-check-label">Numbers?</label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row justify-content-center">
-                      <div class="col">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="specialCharacatersCheckbox"
-                            v-model="hasSpecialCharacters" />
-                          <label for="specialCharacatersCheckbox" class="form-check-label">Special Characters?</label>
-                        </div>
+                  </div>
+                  <div class="row justify-content-center">
+                    <div class="col">
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="specialCharacatersCheckbox"
+                          v-model="hasSpecialCharacters" />
+                        <label for="specialCharacatersCheckbox" class="form-check-label">Special Characters?</label>
                       </div>
                     </div>
                   </div>
@@ -192,15 +196,8 @@ const copyTextToClipboard = () => {
             </div>
           </div>
         </div>
-
-        <div class="row justify-content-center pt-3">
-          <div class="col-8">
-            <button type="button" class="btn btn-primary w-100" :disabled="!isReadyToGeneratePassword"
-              @click="generatePassword">Generate
-              Password</button>
-          </div>
-        </div>
       </div>
+
     </div>
   </div>
 </template>
