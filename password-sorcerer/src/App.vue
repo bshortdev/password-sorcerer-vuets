@@ -11,17 +11,16 @@ const generatedPassword = ref('');
 const isPasswordGenerated = ref(false);
 const isPasswordCopied = ref(false);
 
+const generatedPasswordAsArray = computed(() => {
+  return generatedPassword.value.split('')
+})
+
 const isReadyToGeneratePassword = computed(() => {
   return hasLowercaseLetters.value ||
     hasUppercaseLetters.value ||
     hasNumbers.value ||
     hasSpecialCharacters.value
 })
-
-const setPasswordLengthFromRange = (event: Event) => {
-  const eventTarget = event.target as HTMLInputElement
-  passwordLength.value = eventTarget.valueAsNumber
-}
 
 const getRandomValue = (value: number) => {
   return Math.floor(Math.random() * value);
@@ -92,6 +91,12 @@ const generatePassword = () => {
   isPasswordCopied.value = false;
 };
 
+const setPasswordLengthFromRange = (event: Event) => {
+  const eventTarget = event.target as HTMLInputElement
+  passwordLength.value = eventTarget.valueAsNumber
+  generatePassword();
+}
+
 const copyTextToClipboard = () => {
   navigator.clipboard.writeText(generatedPassword.value);
   isPasswordCopied.value = true;
@@ -112,14 +117,14 @@ onMounted(() => {
       </div>
       <div class="row justify-content-center pb-1">
         <div class="col-4">
-          <div class="input-group">
-            <!-- Replace this with an expandable text field -->
-            <input type="text" class="form-control" placeholder="Generated Password" disabled
-              v-model="generatedPassword" />
-            <button class="btn" :class="isPasswordCopied ? 'btn-outline-success' : 'btn-outline-primary'"
-              @click="copyTextToClipboard" :disabled="!isPasswordGenerated">
-              <i :class="isPasswordCopied ? 'bi-clipboard-check' : 'bi-copy'"></i>
-            </button>
+          <div class="border border-1 border-light rounded p-4">
+            <!-- Style each character based on type -->
+            <span class="text-break flaot-start" v-for="character in generatedPasswordAsArray">
+              {{ character }}
+            </span>
+            <!-- Stick this top right -->
+            <i @click="copyTextToClipboard" class="float-end"
+              :class="isPasswordCopied ? 'bi-clipboard-check text-success' : 'bi-copy text-primary'"></i>
           </div>
         </div>
       </div>
