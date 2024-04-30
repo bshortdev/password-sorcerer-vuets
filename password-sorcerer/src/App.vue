@@ -83,7 +83,7 @@ const generatePassword = () => {
   }
 
   while (generatedPasswordHolder.length < passwordLength.value) {
-    generatedPasswordHolder += randomMethodsToUse[getRandomValue(randomMethodsToUse.length - 1)]()
+    generatedPasswordHolder += randomMethodsToUse[getRandomValue(randomMethodsToUse.length)]()
   }
 
   generatedPassword.value = shuffle(generatedPasswordHolder.split("")).join('')
@@ -102,6 +102,22 @@ const copyTextToClipboard = () => {
   isPasswordCopied.value = true;
 }
 
+const getClassForCharacter = (char: string) => {
+  let letterRegex = /^[a-zA-Z]+$/;
+  let digitRegex = /\d/;
+
+  if (digitRegex.test(char)) {
+    return "text-primary"
+  }
+
+  if (letterRegex.test(char)) {
+    return "text-light"
+  }
+
+  return "text-danger";
+
+}
+
 onMounted(() => {
   generatePassword();
 })
@@ -118,8 +134,8 @@ onMounted(() => {
       <div class="row justify-content-center pb-1">
         <div class="col-4">
           <div class="border border-1 border-light rounded p-4">
-            <!-- Style each character based on type -->
-            <span class="text-break flaot-start" v-for="character in generatedPasswordAsArray">
+            <span class="text-break flaot-start" :class="getClassForCharacter(character)"
+              v-for="character in generatedPasswordAsArray">
               {{ character }}
             </span>
             <!-- Stick this top right -->
