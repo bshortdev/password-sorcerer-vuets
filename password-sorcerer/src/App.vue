@@ -15,13 +15,6 @@ const generatedPasswordAsArray = computed(() => {
   return generatedPassword.value.split('')
 })
 
-const isReadyToGeneratePassword = computed(() => {
-  return hasLowercaseLetters.value ||
-    hasUppercaseLetters.value ||
-    hasNumbers.value ||
-    hasSpecialCharacters.value
-})
-
 const getRandomValue = (value: number) => {
   return Math.floor(Math.random() * value);
 }
@@ -115,7 +108,6 @@ const getClassForCharacter = (char: string) => {
   }
 
   return "text-danger";
-
 }
 
 onMounted(() => {
@@ -126,6 +118,7 @@ onMounted(() => {
 <template>
   <div class="container d-flex flex-column justify-content-center align-items-center ">
     <div class="col-8 vh-100 mx-auto align-content-center">
+      <!-- Use standalone columns where appropriate -->
       <div class="row justify-content-center py-3">
         <div class="col text-center">
           <h1>Password Sorcerer</h1>
@@ -133,23 +126,19 @@ onMounted(() => {
       </div>
       <div class="row justify-content-center pb-1">
         <div class="col-4">
-          <div class="border border-1 border-light rounded p-4">
-            <span class="text-break flaot-start" :class="getClassForCharacter(character)"
-              v-for="character in generatedPasswordAsArray">
-              {{ character }}
-            </span>
-            <!-- Stick this top right -->
-            <i @click="copyTextToClipboard" class="float-end"
-              :class="isPasswordCopied ? 'bi-clipboard-check text-success' : 'bi-copy text-primary'"></i>
+          <div class="d-flex border border-1 border-light rounded p-4 fs-5">
+            <div class="col-9 fw-bold">
+              <span class="text-break " :class="getClassForCharacter(character)"
+                v-for="character in generatedPasswordAsArray">
+                {{ character }}
+              </span>
+            </div>
+            <div class="col-3 ps-2 gap-2 d-flex">
+              <i @click="copyTextToClipboard" class="click-cursor"
+                :class="isPasswordCopied ? 'bi-clipboard-check text-success' : 'bi-copy text-primary'"></i>
+              <i @click="generatePassword" class="bi-arrow-clockwise text-primary click-cursor"></i>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- Change this into an icon next to copy? -->
-      <div class="row justify-content-center pt-1 pb-3">
-        <div class="col-4">
-          <button type="button" class="btn btn-primary w-100" :disabled="!isReadyToGeneratePassword"
-            @click="generatePassword">Generate
-            Password</button>
         </div>
       </div>
       <div class="row justify-content-center">
@@ -218,9 +207,12 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.click-cursor {
+  cursor: pointer;
+}
+</style>
