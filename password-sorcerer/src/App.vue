@@ -119,17 +119,16 @@ onMounted(() => {
   <div class="container d-flex flex-column justify-content-center align-items-center ">
     <div class="col-8 vh-100 mx-auto align-content-center">
       <!-- Use standalone columns where appropriate -->
-      <div class="row justify-content-center py-3">
+      <div class="row justify-content-center py-4">
         <div class="col text-center">
           <h1>Password Sorcerer</h1>
         </div>
       </div>
-      <div class="row justify-content-center pb-1">
-        <div class="col-4">
+      <div class="row justify-content-center pb-3">
+        <div class="col-6">
           <div class="d-flex border border-1 border-light rounded p-4 fs-5">
-            <div class="col-9 fw-bold">
-              <span class="text-break " :class="getClassForCharacter(character)"
-                v-for="character in generatedPasswordAsArray">
+            <div class="col-9 text-break-all">
+              <span :class="getClassForCharacter(character)" v-for="character in generatedPasswordAsArray">
                 {{ character }}
               </span>
             </div>
@@ -142,16 +141,16 @@ onMounted(() => {
         </div>
       </div>
       <div class="row justify-content-center">
-        <div class="col-4">
+        <div class="col-6">
           <div class="accordion" id="accordionExample">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                <button class="accordion-button collapsed fs-4" type="button" data-bs-toggle="collapse"
                   data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                   Settings
                 </button>
               </h2>
-              <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+              <div id="collapseOne" class="accordion-collapse collapse fs-5" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                   <div class="row">
                     <div class="col-12">
@@ -214,5 +213,10 @@ onMounted(() => {
 <style scoped>
 .click-cursor {
   cursor: pointer;
+}
+
+.text-break-all {
+  word-wrap: break-word;
+  word-break: break-all;
 }
 </style>
