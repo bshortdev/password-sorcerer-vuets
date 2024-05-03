@@ -118,7 +118,6 @@ onMounted(() => {
 <template>
   <div class="container d-flex flex-column justify-content-center align-items-center ">
     <div class="col-8 vh-100 mx-auto align-content-center">
-      <!-- Use standalone columns where appropriate -->
       <div class="row justify-content-center py-4">
         <div class="col text-center">
           <h1>Password Sorcerer</h1>
