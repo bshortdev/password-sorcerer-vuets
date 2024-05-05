@@ -125,13 +125,13 @@ onMounted(() => {
       </div>
       <div class="row justify-content-center pb-3">
         <div class="col-6">
-          <div class="d-flex border border-1 border-light rounded p-4 fs-5">
+          <div class="d-flex border border-1 border-light rounded py-4 px-3 fs-5 justify-content-between">
             <div class="col-9 text-break-all">
               <span :class="getClassForCharacter(character)" v-for="character in generatedPasswordAsArray">
                 {{ character }}
               </span>
             </div>
-            <div class="col-3 ps-2 gap-2 d-flex">
+            <div class="col-auto ps-2 gap-2 d-flex float-end">
               <i @click="copyTextToClipboard" class="click-cursor"
                 :class="isPasswordCopied ? 'bi-clipboard-check text-success' : 'bi-copy text-primary'"></i>
               <i @click="generatePassword" class="bi-arrow-clockwise text-primary click-cursor"></i>
